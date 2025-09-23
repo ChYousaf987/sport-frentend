@@ -1,0 +1,96 @@
+.landing{
+    clip-path: polygon(50% 0%, 100% 0%, 100% 90%, 50% 100%, 0 90%, 0 0);
+
+}
+.landing-bg{
+    clip-path: polygon(50% 0%, 100% 0%, 100% 85%, 50% 100%, 0 85%, 0 0);
+}
+.Featured_bg{
+    clip-path: polygon(0 0, 0% 20%, 0 53%, 0% 80%, 0 80%, 50% 92%, 100% 80%, 100% 0, 70% 50%, 100% 0, 80% 0%, 52% 0);
+}
+.landing{
+    background-image: url(../Home/Images/Landing_bg.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 42rem;
+    width: 100%;
+    clip-path: polygon(50% 0%, 100% 0%, 100% 85%, 50% 100%, 0 85%, 0 0);
+}
+.quote{
+    background-image: url(../Home/Images/quote_bg.jpeg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 37rem;
+    width: 100%;
+    clip-path: polygon(50% 0%, 100% 0%, 100% 85%, 50% 100%, 0 85%, 0 0);
+}
+.events{
+    background-image: url(../Events/Images/bg.jpeg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 37rem;
+    width: 100%;
+    clip-path: polygon(50% 0%, 100% 0%, 100% 85%, 50% 100%, 0 85%, 0 0);
+}
+.eventdetail{
+    background-image: url(../Events/Images/bg.jpeg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 37rem;
+    width: 100%;
+    clip-path: polygon(50% 0%, 100% 0%, 100% 85%, 50% 100%, 0 85%, 0 0);
+}
+.about{
+    background-image: url(../About_Us/Images/About_bg.jpeg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 37rem;
+    width: 100%;
+    clip-path: polygon(50% 0%, 100% 0%, 100% 85%, 50% 100%, 0 85%, 0 0);
+}
+.news{
+    background-image: url(../News/Images/bg_news.jpeg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 37rem;
+    width: 100%;
+    clip-path: polygon(50% 0%, 100% 0%, 100% 85%, 50% 100%, 0 85%, 0 0);
+}
+.boost{
+    background-image: url(../Home/Images/boost.jpeg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 37rem;
+    width: 100%;
+    clip-path: polygon(50% 0%, 100% 0%, 100% 85%, 50% 100%, 0 85%, 0 0);
+}
+@media (max-width:1024px) {
+   .quote{
+    height: 24rem;
+   }
+   .boost{
+    height: 24rem;
+   }
+   .landing{
+    height: 33rem;
+   }
+   .about{
+    height: 28rem;
+   }
+   .events{
+    height: 28rem;
+   }
+   .eventdetail{
+    height: 28rem;
+   }
+   .news{
+    height: 28rem;
+   }
+}
