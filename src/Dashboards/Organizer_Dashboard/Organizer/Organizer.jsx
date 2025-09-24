@@ -3,6 +3,18 @@ import { IoIosStar } from "react-icons/io";
 import { BsStar } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import Organizer_Navbar from "../Organizer_Navbar/Organizer_Navbar";
+import defaultProfile from "../My_Profile/images/myprofile.jpg"; // Import same default image as My_Profile
+
+const BACKEND_URL = "http://localhost:3001"; // Define backend base URL
+
+// Helper function to get full image URL, same as My_Profile
+const getFullImageUrl = (path) => {
+  if (!path) return defaultProfile;
+  // If it's already a full URL, return it
+  if (path.startsWith('http')) return path;
+  // Otherwise, prepend backend URL
+  return `${BACKEND_URL}${path}`;
+};
 
 const OrganizerCard = ({ id, name, role, description, image, rating, location }) => {
   const [isFollowing, setIsFollowing] = useState(false);
@@ -20,8 +32,12 @@ const OrganizerCard = ({ id, name, role, description, image, rating, location })
       <div className="flex items-center gap-2">
         <img
           className="rounded-full w-[84px] h-[84px] object-cover"
-          src={image || "/Images/user.jpg"} // Fallback to default image
+          src={getFullImageUrl(image) || defaultProfile} // Use helper function and same fallback
           alt={name}
+          onError={(e) => {
+            console.error(`Failed to load image for ${name}: ${e.target.src}`);
+            e.target.src = defaultProfile; // Fallback to same default as My_Profile
+          }}
         />
         <div className="flex flex-col gap-1">
           <p className="text-xl font-semibold">{name}</p>
@@ -29,7 +45,7 @@ const OrganizerCard = ({ id, name, role, description, image, rating, location })
           <div className="flex items-center">{stars}</div>
         </div>
       </div>
-      <p className="text-lg text-gray-500">Bio</p>
+      {/* <p className="text-lg text-gray-500">Bio</p> */}
       <p className="text-sm">{description || "No description provided"}</p>
       <div className="flex items-center justify-center gap-3">
         <button
@@ -74,7 +90,7 @@ const Organizer = () => {
     // Fetch organizers from the API
     const fetchOrganizers = async () => {
       try {
-        const response = await fetch("http://localhost:3001/api/users/organizers");
+        const response = await fetch(`${BACKEND_URL}/api/users/organizers`);
         if (!response.ok) {
           throw new Error("Failed to fetch organizers");
         }
@@ -85,7 +101,7 @@ const Organizer = () => {
           name: user.fullName,
           role: user.role,
           description: user.description,
-          image: user.profileImage ? `http://localhost:3001${user.profileImage}` : "/Images/user.jpg",
+          image: user.profileImage, // Pass raw profileImage, handled by getFullImageUrl
           rating: Math.floor(Math.random() * 5) + 1, // Placeholder: Replace with actual rating if available
           location: `${user.location}${user.country ? `, ${user.country}` : ""}`,
           eventType: "Tournament", // Placeholder: Adjust based on actual data

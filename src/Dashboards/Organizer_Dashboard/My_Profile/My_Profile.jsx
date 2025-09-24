@@ -1,4 +1,3 @@
-// My_Profile.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { clearError } from "../../../features/users/userSlice";
@@ -29,7 +28,7 @@ const My_Profile = () => {
   const [editForm, setEditForm] = useState({
     fullName: "",
     email: "",
-    phoneNumber: "", // 👈 Added phone number field
+    phoneNumber: "",
     location: "",
     country: "",
     gender: "",
@@ -74,11 +73,15 @@ const My_Profile = () => {
       // Normalize profileImage with full URL
       const normalizedProfileImage = getFullImageUrl(userData.profileImage);
 
-      // Set profile data
+      // Retrieve userData from localStorage as fallback
+      const storedUserData = localStorage.getItem("userData");
+      const storedData = storedUserData ? JSON.parse(storedUserData) : {};
+
+      // Set profile data, using stored phoneNumber if not provided by backend
       setProfile({
         ...userData,
         profileImage: normalizedProfileImage,
-        phoneNumber: userData.phoneNumber || "", // 👈 Use actual phone number from backend
+        phoneNumber: userData.phoneNumber || storedData.phoneNumber || "",
         dateOfBirth: new Date(
           userData.age ? (new Date().getFullYear() - userData.age) : new Date().getFullYear() - 25, 
           0, 
@@ -90,7 +93,7 @@ const My_Profile = () => {
       setEditForm({
         fullName: userData.fullName || "",
         email: userData.email || "",
-        phoneNumber: userData.phoneNumber || "", // 👈 Initialize with actual phone number
+        phoneNumber: userData.phoneNumber || storedData.phoneNumber || "",
         location: userData.location || "",
         country: userData.country || "",
         gender: userData.gender || "",
@@ -260,7 +263,7 @@ const My_Profile = () => {
     formData.append("userId", userId);
     formData.append("fullName", editForm.fullName.trim());
     formData.append("email", editForm.email.trim());
-    formData.append("phoneNumber", editForm.phoneNumber.trim()); // 👈 Add phone number
+    formData.append("phoneNumber", editForm.phoneNumber.trim());
     formData.append("location", editForm.location.trim());
     
     // Only append country if it has a value
@@ -299,13 +302,15 @@ const My_Profile = () => {
       // Update local state
       setProfile({
         ...updatedData.user,
-        profileImage: normalizedProfileImage
+        profileImage: normalizedProfileImage,
+        phoneNumber: updatedData.user.phoneNumber || editForm.phoneNumber // Fallback to form value
       });
       
       // Update localStorage
       localStorage.setItem("userData", JSON.stringify({
         ...updatedData.user,
-        profileImage: normalizedProfileImage
+        profileImage: normalizedProfileImage,
+        phoneNumber: updatedData.user.phoneNumber || editForm.phoneNumber // Fallback to form value
       }));
       
       // Reset form and UI
@@ -337,7 +342,7 @@ const My_Profile = () => {
       setEditForm({
         fullName: profile.fullName || "",
         email: profile.email || "",
-        phoneNumber: profile.phoneNumber || "", // 👈 Reset phone number
+        phoneNumber: profile.phoneNumber || "",
         location: profile.location || "",
         country: profile.country || "",
         gender: profile.gender || "",
