@@ -3,17 +3,22 @@ import { IoIosStar } from "react-icons/io";
 import { BsStar } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import Organizer_Navbar from "../Organizer_Navbar/Organizer_Navbar";
-import defaultProfile from "../My_Profile/images/myprofile.jpg"; // Import same default image as My_Profile
+import defaultProfile from "../My_Profile/images/myprofile.jpg"; // Import default image
 
 const BACKEND_URL = "http://localhost:3001"; // Define backend base URL
 
-// Helper function to get full image URL, same as My_Profile
+// Helper function to get full image URL
 const getFullImageUrl = (path) => {
-  if (!path) return defaultProfile;
-  // If it's already a full URL, return it
-  if (path.startsWith('http')) return path;
-  // Otherwise, prepend backend URL
-  return `${BACKEND_URL}${path}`;
+  if (!path || typeof path !== 'string') {
+    console.warn('Invalid or missing image path, using default profile');
+    return defaultProfile;
+  }
+  if (path.startsWith('http') || path.startsWith('https')) {
+    return path; // Return full URLs as-is
+  }
+  const fullUrl = `${BACKEND_URL}${path.startsWith('/') ? path : `/${path}`}`; // Ensure leading slash
+  console.log(`Constructed image URL: ${fullUrl}`);
+  return fullUrl;
 };
 
 const OrganizerCard = ({ id, name, role, description, image, rating, location }) => {
@@ -32,11 +37,11 @@ const OrganizerCard = ({ id, name, role, description, image, rating, location })
       <div className="flex items-center gap-2">
         <img
           className="rounded-full w-[84px] h-[84px] object-cover"
-          src={getFullImageUrl(image) || defaultProfile} // Use helper function and same fallback
+          src={getFullImageUrl(image) || defaultProfile}
           alt={name}
           onError={(e) => {
             console.error(`Failed to load image for ${name}: ${e.target.src}`);
-            e.target.src = defaultProfile; // Fallback to same default as My_Profile
+            e.target.src = defaultProfile;
           }}
         />
         <div className="flex flex-col gap-1">
@@ -45,7 +50,6 @@ const OrganizerCard = ({ id, name, role, description, image, rating, location })
           <div className="flex items-center">{stars}</div>
         </div>
       </div>
-      {/* <p className="text-lg text-gray-500">Bio</p> */}
       <p className="text-sm">{description || "No description provided"}</p>
       <div className="flex items-center justify-center gap-3">
         <button
@@ -71,7 +75,7 @@ const OrganizerCard = ({ id, name, role, description, image, rating, location })
   );
 };
 
-const SearchResults = ({ results }) => (
+Thisconst SearchResults = ({ results }) => (
   <div className="grid grid-cols-1 md:grid-cols-3 gap-5 p-3">
     {results.length > 0 ? (
       results.map((item) => <OrganizerCard key={item.id} {...item} />)
@@ -90,27 +94,29 @@ const Organizer = () => {
     // Fetch organizers from the API
     const fetchOrganizers = async () => {
       try {
+        console.log('Fetching organizers from:', `${BACKEND_URL}/api/users/organizers`);
         const response = await fetch(`${BACKEND_URL}/api/users/organizers`);
         if (!response.ok) {
-          throw new Error("Failed to fetch organizers");
+          throw new Error(`Failed to fetch organizers: ${response.status} ${response.statusText}`);
         }
         const organizers = await response.json();
+        console.log('Received organizers:', organizers);
         // Map API data to match the component's expected format
         const formattedData = organizers.map((user) => ({
           id: user._id,
           name: user.fullName,
           role: user.role,
           description: user.description,
-          image: user.profileImage, // Pass raw profileImage, handled by getFullImageUrl
-          rating: Math.floor(Math.random() * 5) + 1, // Placeholder: Replace with actual rating if available
+          image: user.profileImage,
+          rating: Math.floor(Math.random() * 5) + 1, // Placeholder: Replace with actual rating
           location: `${user.location}${user.country ? `, ${user.country}` : ""}`,
-          eventType: "Tournament", // Placeholder: Adjust based on actual data
-          accountStatus: "Active", // Placeholder: Adjust based on actual data
+          eventType: "Tournament", // Placeholder
+          accountStatus: "Active", // Placeholder
         }));
         setData(formattedData);
         setFilteredData(formattedData);
       } catch (error) {
-        console.error("Error fetching organizers:", error);
+        console.error("Error fetching organizers:", error.message);
       }
     };
 
