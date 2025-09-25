@@ -75,7 +75,7 @@ const OrganizerCard = ({ id, name, role, description, image, rating, location })
   );
 };
 
-Thisconst SearchResults = ({ results }) => (
+ SearchResults = ({ results }) => (
   <div className="grid grid-cols-1 md:grid-cols-3 gap-5 p-3">
     {results.length > 0 ? (
       results.map((item) => <OrganizerCard key={item.id} {...item} />)
