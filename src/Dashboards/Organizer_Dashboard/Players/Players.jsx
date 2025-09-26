@@ -2,52 +2,24 @@ import React, { useState, useEffect } from "react";
 import { IoIosStar } from "react-icons/io";
 import { BsStar } from "react-icons/bs";
 import { Link } from "react-router-dom";
-
-import userImage from "./Images/user.jpg";
 import Organizer_Navbar from "../Organizer_Navbar/Organizer_Navbar";
+import defaultProfile from "./Images/user.jpg"; // Updated to match your import
 
-const players = [
-  {
-    name: "Alison Thomas",
-    location: "Bern, Switzerland",
-    description: "Enthusiastic player competing in local tournaments.",
-    image: userImage,
-    rating: 3,
-    role: "Player",
-  },
-  {
-    name: "John Doe",
-    location: "Zurich, Switzerland",
-    description: "Casual player with a passion for community events.",
-    image: userImage,
-    rating: 4,
-    role: "Player",
-  },
-  {
-    name: "Emma Wilson",
-    location: "Geneva, Switzerland",
-    description: "Competitive player aiming for national rankings.",
-    image: userImage,
-    rating: 5,
-    role: "Player",
-  },
-  {
-    name: "Michael Brown",
-    location: "Lausanne, Switzerland",
-    description: "Beginner player learning the ropes.",
-    image: userImage,
-    rating: 2,
-    role: "Player",
-  },
-  {
-    name: "Sarah Davis",
-    location: "Basel, Switzerland",
-    description: "Experienced player in regional leagues.",
-    image: userImage,
-    rating: 4,
-    role: "Player",
-  },
-];
+const BACKEND_URL = "http://localhost:3001"; // Define backend base URL
+
+// Helper function to get full image URL
+const getFullImageUrl = (path) => {
+  if (!path || typeof path !== 'string' || path.trim() === '') {
+    console.warn('Invalid or missing image path, using default profile');
+    return defaultProfile;
+  }
+  if (path.startsWith('http') || path.startsWith('https')) {
+    return path; // Return full URLs as-is
+  }
+  const fullUrl = `${BACKEND_URL}${path.startsWith('/') ? path : `/${path}`}`; // Ensure leading slash
+  console.log(`Constructed image URL: ${fullUrl}`);
+  return fullUrl;
+};
 
 const PlayerCard = ({ name, location, description, image, rating }) => {
   const [isFollowing, setIsFollowing] = useState(false);
@@ -65,8 +37,12 @@ const PlayerCard = ({ name, location, description, image, rating }) => {
       <div className="flex items-center gap-2">
         <img
           className="rounded-full w-[84px] h-[84px] object-cover"
-          src={image}
+          src={getFullImageUrl(image) || defaultProfile}
           alt={name}
+          onError={(e) => {
+            console.error(`Failed to load image for ${name}: ${e.target.src}`);
+            e.target.src = defaultProfile;
+          }}
         />
         <div className="flex flex-col gap-1">
           <p className="text-xl font-semibold">{name}</p>
@@ -101,15 +77,44 @@ const PlayerCard = ({ name, location, description, image, rating }) => {
 };
 
 const Players = () => {
-  const [data, setData] = useState(players);
-  const [filteredData, setFilteredData] = useState(players);
-  const [searchType, setSearchType] = useState("");
+  const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [searchType, setSearchType] = useState("user");
+  const [loading, setLoading] = useState(true); // Added loading state
+  const [error, setError] = useState(null); // Added error state
 
   useEffect(() => {
-    // Simulate API call
-    // Replace with: fetch("/api/players").then(res => res.json()).then(setData);
-    setData(players);
-    setFilteredData(players);
+    // Fetch players from the API
+    const fetchPlayers = async () => {
+      try {
+        console.log('Fetching players from:', `${BACKEND_URL}/api/users/players`);
+        const response = await fetch(`${BACKEND_URL}/api/users/players`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch players: ${response.status} ${response.statusText}`);
+        }
+        const players = await response.json();
+        console.log('Received players:', players);
+        // Map API data to match PlayerCard props
+        const formattedData = players.map((user) => ({
+          id: user._id,
+          name: user.fullName,
+          location: `${user.location}${user.country ? `, ${user.country}` : ""}`,
+          description: user.description || "No description provided",
+          image: user.profileImage,
+          rating: Math.floor(Math.random() * 5) + 1, // Placeholder: Replace with actual rating
+        }));
+        setData(formattedData);
+        setFilteredData(formattedData);
+        setError(null);
+      } catch (error) {
+        console.error("Error fetching players:", error.message);
+        setError(error.message);
+      } finally {
+        setLoading(false); // End loading after fetch
+      }
+    };
+
+    fetchPlayers();
   }, []);
 
   const handleSearch = (query, type = searchType) => {
@@ -150,13 +155,21 @@ const Players = () => {
             <p className="text-xl font-semibold p-5">All Players</p>
             <hr className="my-2" />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 p-3">
-              {filteredData.length > 0 ? (
-                filteredData.map((player, index) => (
-                  <PlayerCard key={index} {...player} />
+              {loading ? (
+                <p className="text-center text-gray-500 col-span-3">
+                  Loading players...
+                </p>
+              ) : error ? (
+                <p className="text-center text-red-500 col-span-3">
+                  {error}
+                </p>
+              ) : filteredData.length > 0 ? (
+                filteredData.map((player) => (
+                  <PlayerCard key={player.id} {...player} />
                 ))
               ) : (
                 <p className="text-center text-gray-500 col-span-3">
-                  No results found
+                  No players found
                 </p>
               )}
             </div>
