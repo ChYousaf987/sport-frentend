@@ -1,6 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 
 const Edit_Player_Profile = () => {
+  const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedCity, setSelectedCity] = useState('');
+
+  const citiesByCountry = {
+    'United States': ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia', 'San Antonio', 'San Diego', 'Dallas', 'San Jose', 'Other'],
+    'Canada': ['Toronto', 'Montreal', 'Vancouver', 'Calgary', 'Edmonton', 'Ottawa', 'Winnipeg', 'Quebec City', 'Hamilton', 'Other'],
+    'United Kingdom': ['London', 'Birmingham', 'Manchester', 'Glasgow', 'Leeds', 'Liverpool', 'Edinburgh', 'Sheffield', 'Bristol', 'Other'],
+    'Australia': ['Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide', 'Gold Coast', 'Newcastle', 'Canberra', 'Other'],
+    'India': ['Delhi', 'Mumbai', 'Bangalore', 'Hyderabad', 'Ahmedabad', 'Chennai', 'Kolkata', 'Surat', 'Pune', 'Other'],
+    'Pakistan': ['Karachi', 'Lahore', 'Faisalabad', 'Rawalpindi', 'Multan', 'Hyderabad', 'Gujranwala', 'Peshawar', 'Other'],
+    'Germany': ['Berlin', 'Hamburg', 'Munich', 'Cologne', 'Frankfurt', 'Stuttgart', 'Düsseldorf', 'Leipzig', 'Other'],
+    'France': ['Paris', 'Marseille', 'Lyon', 'Toulouse', 'Nice', 'Nantes', 'Montpellier', 'Strasbourg', 'Bordeaux', 'Other'],
+    'Other': ['Other']
+  };
+
+  const availableCities = selectedCountry && citiesByCountry[selectedCountry] ? citiesByCountry[selectedCountry] : [];
+
   return (
     <div className="absolute top-20 right-0 bg-[#FAFAFA] w-[75%] float-right max-lg:w-[100%] max-lg:mt-10">
       <div className="bg-white p-6 rounded-lg shadow-md">
@@ -74,16 +91,38 @@ const Edit_Player_Profile = () => {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="text-sm text-gray-600 block mb-1">Country</label>
-            <select className="w-full p-2 border rounded">
+            <select 
+              className="w-full p-2 border rounded"
+              value={selectedCountry}
+              onChange={(e) => setSelectedCountry(e.target.value)}
+            >
               <option>Select Country</option>
+              <option>United States</option>
+              <option>Canada</option>
+              <option>United Kingdom</option>
+              <option>Australia</option>
+              <option>India</option>
+              <option>Pakistan</option>
+              <option>Germany</option>
+              <option>France</option>
+              <option>Other</option>
             </select>
           </div>
           <div>
             <label className="text-sm text-gray-600 block mb-1">
               City/Region
             </label>
-            <select className="w-full p-2 border rounded">
-              <option>Enter or Select City/Region</option>
+            <select 
+              className="w-full p-2 border rounded"
+              value={selectedCity}
+              onChange={(e) => setSelectedCity(e.target.value)}
+            >
+              <option>{selectedCountry ? 'Select City/Region' : 'Enter or Select City/Region'}</option>
+              {availableCities.map((city) => (
+                <option key={city} value={city}>
+                  {city}
+                </option>
+              ))}
             </select>
           </div>
           <div className="col-span-2">
@@ -108,6 +147,14 @@ const Edit_Player_Profile = () => {
             </label>
             <select className="w-full p-2 border rounded">
               <option>Select Sport</option>
+              <option>Soccer</option>
+              <option>Basketball</option>
+              <option>Tennis</option>
+              <option>Cricket</option>
+              <option>Volleyball</option>
+              <option>Badminton</option>
+              <option>Golf</option>
+              <option>Other</option>
             </select>
           </div>
           <div>
@@ -116,6 +163,10 @@ const Edit_Player_Profile = () => {
             </label>
             <select className="w-full p-2 border rounded">
               <option>Select Skill</option>
+              <option>Beginner</option>
+              <option>Intermediate</option>
+              <option>Advanced</option>
+              <option>Professional</option>
             </select>
           </div>
           <div>
@@ -124,6 +175,14 @@ const Edit_Player_Profile = () => {
             </label>
             <select className="w-full p-2 border rounded">
               <option>Select your position</option>
+              <option>Goalkeeper</option>
+              <option>Defender</option>
+              <option>Midfielder</option>
+              <option>Forward</option>
+              <option>Point Guard</option>
+              <option>Shooting Guard</option>
+              <option>Center</option>
+              <option>Other</option>
             </select>
           </div>
           <div>
@@ -132,6 +191,15 @@ const Edit_Player_Profile = () => {
             </label>
             <select className="w-full p-2 border rounded">
               <option>Select your time and day</option>
+              <option>Monday Morning</option>
+              <option>Tuesday Afternoon</option>
+              <option>Wednesday Evening</option>
+              <option>Thursday Morning</option>
+              <option>Friday Afternoon</option>
+              <option>Saturday All Day</option>
+              <option>Sunday Evening</option>
+              <option>Weekdays Only</option>
+              <option>Weekends Only</option>
             </select>
           </div>
         </div>
@@ -194,17 +262,26 @@ const Edit_Player_Profile = () => {
             </label>
             <select className="w-full p-2 border rounded">
               <option>Select Size of team</option>
+              <option>Individual</option>
+              <option>2 Players</option>
+              <option>5 Players</option>
+              <option>7 Players</option>
+              <option>11 Players</option>
+              <option>Custom</option>
             </select>
           </div>
           <div>
             <label className="text-sm text-gray-600 block mb-1">
               Max Player per Team
             </label>
-            <input
-              type="text"
-              placeholder="Enter the limit of player"
-              className="w-full p-2 border rounded"
-            />
+            <select className="w-full p-2 border rounded">
+              <option>Select the limit of players</option>
+              <option>5</option>
+              <option>10</option>
+              <option>15</option>
+              <option>20</option>
+              <option>Unlimited</option>
+            </select>
           </div>
           <div>
             <label className="text-sm text-gray-600 block mb-1">
@@ -212,6 +289,11 @@ const Edit_Player_Profile = () => {
             </label>
             <select className="w-full p-2 border rounded">
               <option>Select your participation type</option>
+              <option>Solo</option>
+              <option>Team</option>
+              <option>Mixed</option>
+              <option>League</option>
+              <option>Tournament</option>
             </select>
           </div>
           <div>
@@ -236,6 +318,12 @@ const Edit_Player_Profile = () => {
             </label>
             <select className="w-full p-2 border rounded">
               <option>Select Payment Method</option>
+              <option>Credit Card</option>
+              <option>Debit Card</option>
+              <option>PayPal</option>
+              <option>Bank Transfer</option>
+              <option>Cryptocurrency</option>
+              <option>Other</option>
             </select>
           </div>
           <div>
